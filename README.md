@@ -17,6 +17,14 @@ a(n) = the minimum number of cells in a connected polyiamond (a figure made of e
 
 All 14 values proved exact by SAT (Glucose 4.2 via PySAT + CEGAR). Every reported a(n) was independently re-verified by brute-force enumeration (every free n-iamond tested against every orientation and offset inside the reported container). Terms n=10..14 were additionally cross-validated with a larger grid (rows+1): same answers.
 
+## Figures
+
+Optimal containers for each proved term (compiled PDF: [submission/polyiamond-container-figures.pdf](submission/polyiamond-container-figures.pdf)).
+
+![Containers a(1) through a(5)](submission/figures-png/polyiamond-container-figures-1.png)
+![Containers a(6) through a(10)](submission/figures-png/polyiamond-container-figures-2.png)
+![Containers a(11) through a(14)](submission/figures-png/polyiamond-container-figures-3.png)
+
 ## Grid Family Comparison
 
 | n | Triangle (this) | Square (A327094) | Hex (ours, draft) |
