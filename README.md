@@ -17,7 +17,7 @@ a(n) = the minimum number of cells in a connected polyiamond such that every fre
 
 All 14 terms proved by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivity cuts. Each a(n) confirmed by SAT at k cells, UNSAT at k-1. Every reported value independently re-verified by brute-force enumeration (each free n-iamond tested against every orientation and offset inside the reported container). Terms n=10..14 additionally cross-validated on a larger grid (rows+1): same answers.
 
-<p align="center"><img src="submission/a14-container.png" alt="a(14) = 41: smallest container for all 26,166 free 14-iamonds"></p>
+<p align="center"><img src="submission/figure-a14.png" alt="a(14) = 41: smallest container for all 26,166 free 14-iamonds"></p>
 
 ## Grid Family Comparison
 
@@ -62,7 +62,7 @@ python code/solve_polyiamond_container.py --n 10-14
 | `code/generate-figures.py` | Publication figure generator (Typst) |
 | `research/solver-results.json` | Machine-readable results with solutions |
 | `research/solver-run-log.txt` | Reviewer-grade proof of solver run |
-| `submission/a14-container.png` | Optimal 41-cell container for n=14 |
+| `submission/figure-a14.png` | Optimal 41-cell container for n=14 |
 
 ## Prior Art and Acknowledgments
 
@@ -81,6 +81,11 @@ AMD Ryzen 5 5600 (6-core / 12-thread), 16 GB RAM.
 [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) -- Peter Exley, 2026.
 
 This work is freely available. If you find it useful, a citation or acknowledgment is appreciated but not required.
+
+## References
+
+- T. R. Dawson, *Fairy Chess Review* Vol. 5 No. 4, 1942 (original formulation of the Minimum Common Superform problem for pentominoes; archival print, not available online).
+- Puzzle Zapper, [Polyomino Common Superforms](https://puzzlezapper.com/aom/mathrec/polycover.html) (secondary source describing Dawson's 1942 problem and the MCS concept for polyominoes).
 
 ## Links
 
