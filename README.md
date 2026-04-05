@@ -92,8 +92,8 @@ This work is freely available. If you find it useful, a citation or acknowledgme
 
 ## References
 
-- T. R. Dawson, *Fairy Chess Review* Vol. 5 No. 4, 1942 (original formulation of the Minimum Common Superform problem for pentominoes; archival print, not available online).
-- Puzzle Zapper, [Polyomino Common Superforms](https://puzzlezapper.com/aom/mathrec/polycover.html) (secondary source describing Dawson's 1942 problem and the MCS concept for polyominoes).
+- T. R. Dawson, *Fairy Chess Review* Vol. 5 No. 4, 1942 -- original formulation of the Minimum Common Superform problem for pentominoes. Archive: [The Problemist -- Fairy Chess Review volumes](https://www.theproblemist.org/mags.pl?type=fcr&page=volumes) (Vol. 5 covers 1942-1945).
+- Puzzle Zapper, [Polyomino Common Superforms](https://puzzlezapper.com/aom/mathrec/polycover.html) -- secondary source describing Dawson's 1942 problem and the MCS concept for polyominoes.
 
 ## Links
 
