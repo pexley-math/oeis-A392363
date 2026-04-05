@@ -21,15 +21,15 @@ All 14 terms proved by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivit
 
 ## Grid Family Comparison
 
-| n | Triangle (this) | Square ([A327094](https://oeis.org/A327094)) | Hex (draft) |
-|:---:|:---:|:---:|:---:|
-| 4 | 5 | 6 | 7 |
-| 5 | 6 | 9 | 10 |
-| 6 | 9 | 12 | 14 |
-| 7 | 12 | 17 | 18 |
-| 8 | 16 | 20 | 24 |
+| n | Triangle (this) | Square ([A327094](https://oeis.org/A327094)) |
+|:---:|:---:|:---:|
+| 4 | 5 | 6 |
+| 5 | 6 | 9 |
+| 6 | 9 | 12 |
+| 7 | 12 | 17 |
+| 8 | 16 | 20 |
 
-Triangle < Square < Hex consistently. Triangular cells have 3 edge-neighbors (vs 4 square, 6 hex), making polyiamond pieces more linear and easier to pack into a common container.
+Triangle values are smaller than square values for n >= 4. Triangular cells have 3 edge-neighbors (vs 4 for squares), making polyiamond pieces more linear and easier to pack into a common container.
 
 ## Method
 
