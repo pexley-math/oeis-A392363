@@ -21,7 +21,7 @@
 
 %C A?????? All 14 terms proved exact by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivity cuts. For each n: SAT at k cells confirms a solution exists; UNSAT at k-1 proves no smaller solution exists. Every reported value was independently cross-validated by brute-force enumeration: each free n-iamond is tested against every orientation and offset inside the reported container.
 
-%H A?????? _Peter Exley_, <a href="URL">Polyiamond container sequence: solver code, data, and figures</a>, GitHub.
+%H A?????? _Peter Exley_, <a href="https://github.com/pexley-math/oeis-polyiamond-container">Polyiamond container sequence: solver code, data, and figures</a>, GitHub.
 
 %e A?????? Optimal containers shown as ASCII art. Each cell is a triangular tile: ^ = up-pointing, v = down-pointing, . = empty. Cells (r,c) are on a triangular lattice where (r+c) mod 2 = 0 gives an up-pointing cell and (r+c) mod 2 = 1 gives a down-pointing cell. Each cell has exactly 3 edge-neighbors.
 
