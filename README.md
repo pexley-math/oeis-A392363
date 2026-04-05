@@ -17,7 +17,7 @@ a(n) = the minimum number of cells in a connected polyiamond such that every fre
 
 All 14 terms proved by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivity cuts. Each a(n) confirmed by SAT at k cells, UNSAT at k-1. Every reported value independently re-verified by brute-force enumeration (each free n-iamond tested against every orientation and offset inside the reported container). Terms n=10..14 additionally cross-validated on a larger grid (rows+1): same answers.
 
-![a(14) = 41: smallest container for all 26,166 free 14-iamonds](submission/a14-container.png)
+<p align="center"><img src="submission/a14-container.png" alt="a(14) = 41: smallest container for all 26,166 free 14-iamonds"></p>
 
 ## Grid Family Comparison
 
