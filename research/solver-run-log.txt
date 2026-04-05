@@ -289,6 +289,3 @@ RESULTS SUMMARY
 
   Total time: 1132.2s
 
-  Results saved to research/solver-results.json
-  Versioned: research/solver-results-20260405-090200.json
-
