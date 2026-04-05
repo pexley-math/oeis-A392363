@@ -19,11 +19,7 @@ All 14 values proved exact by SAT (Glucose 4.2 via PySAT + CEGAR). Every reporte
 
 ## Figures
 
-Optimal containers for each proved term (compiled PDF: [submission/polyiamond-container-figures.pdf](submission/polyiamond-container-figures.pdf)).
-
-![Containers a(1) through a(5)](submission/figures-png/polyiamond-container-figures-1.png)
-![Containers a(6) through a(10)](submission/figures-png/polyiamond-container-figures-2.png)
-![Containers a(11) through a(14)](submission/figures-png/polyiamond-container-figures-3.png)
+Optimal containers for each proved term: [submission/polyiamond-container-figures.pdf](submission/polyiamond-container-figures.pdf) (one container per term, a(1) through a(14)).
 
 ## Grid Family Comparison
 
