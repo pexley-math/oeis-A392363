@@ -1,0 +1,106 @@
+%N A?????? Smallest number of cells in a connected polyiamond containing every free n-iamond as a sub-pattern under translation, rotation, and reflection.
+
+%S A?????? 1,2,3,5,6,9,12,16,19,23,27,31,36,41
+
+%O A?????? 1,2
+
+%C A?????? A polyiamond is a connected figure formed by joining equilateral triangles along their edges. Free n-iamonds are distinct under translation, rotation, and reflection; the number of free n-iamonds is A000577(n). For each n, a(n) is the number of cells in the smallest connected polyiamond such that every free n-iamond can be placed (translated, rotated, reflected) entirely within it.
+
+%C A?????? This is the triangular grid analog of A327094 (square grid, Minimum Common Superform problem). Triangular cells have 3 edge-neighbors each (vs 4 for squares, 6 for hexagons), making polyiamond pieces more linear and easier to pack into a common container. Comparison of the first terms across the three grid types:
+
+%C A??????   n:            1   2   3   4   5   6   7   8   9  10  11
+%C A??????   triangle:     1   2   3   5   6   9  12  16  19  23  27
+%C A??????   square:       1   1   4   6   9  12  17  20  26   -   -
+%C A??????   hex:          1   2   4   7  10  14  18  24   -   -   -
+
+%C A?????? Triangle values are consistently smallest. The problem setting generalises T. R. Dawson's 1942 Minimum Common Superform question for pentominoes (Fairy Chess Review Vol. 5 No. 4) to the triangular grid.
+
+%C A?????? Asymptotic observation (unverified): the ratio a(n)/n^2 is monotone decreasing and appears to approach approximately 0.21 for n >= 10, consistent with solutions of roughly (n/3) rows by n columns at density near 0.6. Need more terms to confirm.
+
+%C A?????? Prior art search: we searched OEIS using the full 14-term sequence, its first differences, partial sums, and shifted versions; we searched arXiv, Google Scholar, GitHub, and general web sources for "minimum common superform", "polyiamond universal container", and related terms. No prior entry was found for the triangular grid case.
+
+%C A?????? All 14 terms proved exact by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivity cuts. For each n: SAT at k cells confirms a solution exists; UNSAT at k-1 proves no smaller solution exists. Every reported value was independently cross-validated by brute-force enumeration: each free n-iamond is tested against every orientation and offset inside the reported container.
+
+%H A?????? _Peter Exley_, <a href="URL">Polyiamond container sequence: solver code, data, and figures</a>, GitHub.
+
+%e A?????? Optimal containers shown as ASCII art. Each cell is a triangular tile: ^ = up-pointing, v = down-pointing, . = empty. Cells (r,c) are on a triangular lattice where (r+c) mod 2 = 0 gives an up-pointing cell and (r+c) mod 2 = 1 gives a down-pointing cell. Each cell has exactly 3 edge-neighbors.
+
+%e A?????? a(1) = 1: single triangle (trivially contains the only free 1-iamond).
+
+%e A?????? a(2) = 2: two adjacent triangles forming the only free 2-iamond (one up, one down).
+
+%e A?????? a(3) = 3: three adjacent triangles forming the only free 3-iamond.
+
+%e A?????? a(4) = 5 (contains all 3 free tetraiamonds):
+%e A??????   . v . .
+%e A??????   v ^ v ^
+
+%e A?????? a(5) = 6 (contains all 4 free pentaiamonds):
+%e A??????   . . v
+%e A??????   . v ^
+%e A??????   v ^ v
+
+%e A?????? a(6) = 9 (contains all 12 free hexiamonds):
+%e A??????   . . . v ^ v
+%e A??????   v ^ v ^ v ^
+
+%e A?????? a(12) = 31 (contains all 3334 free 12-iamonds):
+%e A??????   . . . . . . . . ^ v ^ v
+%e A??????   . . . . . . . ^ v ^ v ^
+%e A??????   ^ v ^ v ^ v ^ v ^ v ^ v
+%e A??????   . . v ^ v ^ v ^ v ^ v ^
+
+%e A?????? a(14) = 41 (contains all 26166 free 14-iamonds):
+%e A??????   . . . v ^ v ^ v ^ v ^ v ^ v
+%e A??????   v ^ v ^ v ^ v ^ v ^ v ^ v ^
+%e A??????   . . ^ v ^ v ^ v ^ v ^ . . .
+%e A??????   . . v ^ v ^ v . . . . . . .
+%e A??????   . . . . ^ v . . . . . . . .
+
+%o A?????? (Python)
+%o A?????? # Verification: confirm all free n-iamonds fit in a candidate container.
+%o A?????? def nb(r, c):
+%o A??????     if (r+c)%2==0: return ((r,c-1),(r,c+1),(r-1,c))
+%o A??????     return ((r,c-1),(r,c+1),(r+1,c))
+%o A?????? def norm(cells):
+%o A??????     mr=min(r for r,c in cells); mc=min(c for r,c in cells)
+%o A??????     k=(mc-mr)//2; dc=mr+2*k
+%o A??????     return frozenset((r-mr,c-dc) for r,c in cells)
+%o A?????? def rot60(r,c):
+%o A??????     t=(r+c)%2; return ((r+c+1)//2, (c-3*r-t-2)//2)
+%o A?????? def orients(cells):
+%o A??????     out=set()
+%o A??????     for refl in [False,True]:
+%o A??????         w=[(-r-1,c) for r,c in cells] if refl else list(cells)
+%o A??????         for _ in range(6):
+%o A??????             out.add(norm(w)); w=[rot60(*x) for x in w]
+%o A??????     return out
+%o A?????? def gen_free(n):
+%o A??????     if n==1: return [frozenset([(0,0)])]
+%o A??????     prev,seen,out=gen_free(n-1),set(),[]
+%o A??????     for p in prev:
+%o A??????         for r,c in p:
+%o A??????             for nn in nb(r,c):
+%o A??????                 if nn not in p:
+%o A??????                     nw=norm(p|{nn})
+%o A??????                     if nw not in seen: seen.add(nw); out.append(nw)
+%o A??????     canon=set(); free=[]
+%o A??????     for p in out:
+%o A??????         c=min(tuple(sorted(o)) for o in orients(p))
+%o A??????         if c not in canon: canon.add(c); free.append(p)
+%o A??????     return free
+%o A?????? def fits(piece, container):
+%o A??????     cs=set(container); rs=[r for r,_ in cs]; csc=[c for _,c in cs]
+%o A??????     rmin,rmax,cmin,cmax=min(rs),max(rs),min(csc),max(csc)
+%o A??????     for ori in orients(piece):
+%o A??????         oc=list(ori)
+%o A??????         for dr in range(rmin-1,rmax+2):
+%o A??????             for dc in range(cmin-1,cmax+2):
+%o A??????                 if all((r+dr,c+dc) in cs for r,c in oc): return True
+%o A??????     return False
+
+%Y A?????? Cf. A000577 (free polyiamonds), A327094 (square grid analog), A352029 (minimalist polyomino containers, count of square-grid analog solutions).
+
+%K A?????? nonn,more
+
+%A A?????? _Peter Exley_, Apr 05 2026
