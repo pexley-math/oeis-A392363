@@ -21,6 +21,8 @@ All 14 terms proved by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivit
 
 ## Grid Family Comparison
 
+<div align="center">
+
 | n | Triangle (this) | Square ([A327094](https://oeis.org/A327094)) |
 |:---:|:---:|:---:|
 | 4 | 5 | 6 |
@@ -28,6 +30,8 @@ All 14 terms proved by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivit
 | 6 | 9 | 12 |
 | 7 | 12 | 17 |
 | 8 | 16 | 20 |
+
+</div>
 
 Triangle values are smaller than square values for n >= 4. Triangular cells have 3 edge-neighbors (vs 4 for squares), making polyiamond pieces more linear and easier to pack into a common container.
 
@@ -56,6 +60,8 @@ python code/solve_polyiamond_container.py --n 10-14
 
 ## Files
 
+<div align="center">
+
 | File | Description |
 |------|-------------|
 | `code/solve_polyiamond_container.py` | SAT + CEGAR solver (main solver) |
@@ -63,6 +69,8 @@ python code/solve_polyiamond_container.py --n 10-14
 | `research/solver-results.json` | Machine-readable results with solutions |
 | `research/solver-run-log.txt` | Reviewer-grade proof of solver run |
 | `submission/figure-a14.png` | Optimal 41-cell container for n=14 |
+
+</div>
 
 ## Prior Art and Acknowledgments
 
