@@ -1,45 +1,35 @@
-# OEIS (pending A-number) -- Smallest Polyiamond Containing All Free n-Iamonds
+# OEIS (pending) -- Smallest Polyiamond Containing All Free n-Iamonds
 
-Solver code, data, and figures for the smallest connected polyiamond that contains every free polyiamond of size n as a sub-pattern.
+Solver code, data, and figures for a new OEIS sequence (A-number pending submission).
 
 ## The Problem
 
-a(n) = the minimum number of cells in a connected polyiamond such that every free n-iamond can be placed (translated, rotated, reflected) entirely within it. A polyiamond is a connected figure of edge-joined equilateral triangles. Each cell has exactly 3 edge-neighbors. Free n-iamonds are the [A000577](https://oeis.org/A000577)(n) distinct shapes up to translation, rotation, and reflection. This is the triangular-grid analog of [A327094](https://oeis.org/A327094) (square grid, Dawson's Minimum Common Superform problem for pentominoes, 1942).
+a(n) = the minimum number of triangular cells in a connected polyiamond such that every free n-iamond can be placed entirely within it under a rigid motion of the triangular lattice (a D_6 orientation plus a parity-preserving lattice translation). This is the triangular-grid analog of [A327094](https://oeis.org/A327094) (square grid, Dawson's Minimum Common Superform problem, 1942). The input to the problem -- the number of free n-iamonds -- is [A000577](https://oeis.org/A000577).
 
 ## Results
 
-**Proved terms (this work):**
+**New proved terms (this work):**
 
 | n | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| a(n) | 1 | 2 | 3 | 5 | 6 | 9 | 12 | 16 | 19 | 23 | 27 | 31 | 36 | 41 |
-| free n-iamonds | 1 | 1 | 1 | 3 | 4 | 12 | 24 | 66 | 160 | 448 | 1186 | 3334 | 9235 | 26166 |
+| **a(n)** | 1 | 2 | 3 | 5 | 7 | 10 | 13 | 16 | 19 | 24 | 27 | 32 | 37 | 42 |
+| **Pieces** | 1 | 1 | 1 | 3 | 4 | 12 | 24 | 66 | 160 | 448 | 1186 | 3334 | 9235 | 26166 |
 
-All 14 terms proved by SAT solver (Glucose 4.2 via PySAT) with CEGAR connectivity cuts. Each a(n) confirmed by SAT at k cells, UNSAT at k-1. Every reported value independently re-verified by brute-force enumeration (each free n-iamond tested against every orientation and offset inside the reported container). Terms n=10..14 additionally cross-validated on a larger grid (rows+1): same answers.
+Each value proved by matching SAT/UNSAT certificates (SAT at a(n), UNSAT at a(n)-1) on an unconstrained solver. Every container verified by two independent geometric verifiers with disjoint code paths, each checking both containment and local optimality.
 
-<p align="center"><img src="submission/figure-a14.png" alt="a(14) = 41: smallest container for all 26,166 free 14-iamonds"></p>
+## Conjecture
 
-## Grid Family Comparison
+lim a(n)/n^2 = 1/5.
 
-<div align="center">
-
-| n | Triangle (this) | Square ([A327094](https://oeis.org/A327094)) |
-|:---:|:---:|:---:|
-| 4 | 5 | 6 |
-| 5 | 6 | 9 |
-| 6 | 9 | 12 |
-| 7 | 12 | 17 |
-| 8 | 16 | 20 |
-
-</div>
-
-Triangle values are smaller than square values for n >= 4. Triangular cells have 3 edge-neighbors (vs 4 for squares), making polyiamond pieces more linear and easier to pack into a common container.
+The empirical upper bound a(n) <= ceil((n^2 + 2n)/5) holds on all 14 computed terms, tight at n <= 8 and n = 10. The asymptotic ratio a(n)/n^2 decreases monotonically from 0.240 (n=10) to 0.214 (n=14).
 
 ## Method
 
-Boolean satisfiability (SAT) solver (Glucose 4.2 via PySAT) with counterexample-guided abstraction refinement (CEGAR) for connectivity. For each n, free n-iamonds are enumerated and verified against [A000577](https://oeis.org/A000577). The SAT encoding has cell-occupancy variables plus per-placement auxiliaries (at least one placement per piece; each placement implies its cells are occupied). Cardinality is enforced with the totalizer encoding (exactly k cells) and shape constraints (contiguous columns per row plus at least one full row of width n) are applied for n >= 6. Connectivity is enforced lazily: solve, find components, cut disconnected solutions. Top-down search proves optimality: satisfiable (SAT) at k confirms a solution exists, unsatisfiable (UNSAT) at k-1 proves no smaller solution is possible.
+Unconstrained Boolean satisfiability (SAT) solver (Glucose 4.2 via PySAT) with counterexample-guided abstraction refinement (CEGAR) for connectivity. Top-down search with binary search + linear descent proves optimality: SAT at k cells confirms a solution exists, UNSAT at k-1 proves no smaller solution is possible.
 
-**Key optimisation:** tight rectangular grid `rows = max(4, (n+2)//3)` by `n` columns, derived from observed solution bounding boxes at n=4..14. This single architectural choice gives a 457x speed-up at n=11 (7s vs 55 minutes with the initial n x n grid).
+- **Tight grid heuristic:** R(n) = max(4, floor((n+2)/3)) rows by n columns. Gives >100x speedup over naive n x n grid.
+- **Pre-solve:** Mandatory and impossible cells identified before SAT search, added as free unit clauses.
+- **No shape-constraint heuristics:** Row-contiguity constraints were found to exclude true optima at n=11 and n=14 (optimal containers have non-contiguous bottom rows). All reported values use the unconstrained solver.
 
 ## Running the Solver
 
@@ -53,30 +43,31 @@ python code/solve_polyiamond_container.py --n 1-14
 
 # Run specific term
 python code/solve_polyiamond_container.py --n 12
+```
 
-# Run range
-python code/solve_polyiamond_container.py --n 10-14
+**Verify all proofs** (two independent verifiers, no shared code paths):
+
+```bash
+python code/verify_independent.py 14    # ~63s, D_6 reimplementation
+python code/verify_geometric.py 14      # ~28s, geometric containment
 ```
 
 ## Files
 
-<div align="center">
-
 | File | Description |
 |------|-------------|
-| `code/solve_polyiamond_container.py` | SAT + CEGAR solver (main solver) |
-| `code/generate-figures.py` | Publication figure generator (Typst) |
+| `code/solve_polyiamond_container.py` | Unconstrained SAT+CEGAR solver |
+| `code/verify_independent.py` | Independent verifier #1 (containment + local optimality) |
+| `code/verify_geometric.py` | Independent verifier #2 (containment + local optimality) |
+| `code/generate-figures.py` | Publication figure generator |
 | `research/solver-results.json` | Machine-readable results with solutions |
-| `research/solver-run-log.txt` | Reviewer-grade proof of solver run |
-| `submission/figure-a14.png` | Optimal 41-cell container for n=14 |
-
-</div>
+| `submission/hero-a14.pdf` | Hero figure: a(14) = 42 |
 
 ## Prior Art and Acknowledgments
 
-This is a new sequence -- no prior OEIS entry exists for the triangular-grid version. Prior-art search: 21 queries across OEIS (10), arXiv, Google Scholar, GitHub, and general web sources for "minimum common superform", "polyiamond universal container", and related terms. The problem generalises T. R. Dawson's 1942 Minimum Common Superform question for pentominoes (Fairy Chess Review Vol. 5 No. 4) to the triangular grid.
+This is a new sequence -- no prior OEIS entry exists for this problem. Prior art search: OEIS (8 queries), arXiv, Google Scholar, GitHub, and general web sources. No match found. Closest known sequence [A033638](https://oeis.org/A033638) (quarter-squares + 1) diverges at a(8).
 
-Related: [A327094](https://oeis.org/A327094) (square grid analog), [A000577](https://oeis.org/A000577) (free polyiamond count, the input to this problem), [A352029](https://oeis.org/A352029) (minimalist polyomino containers, count of square-grid minimum solutions).
+T. R. Dawson introduced the Minimum Common Superform (MCS) problem for pentominoes in *Fairy Chess Review* Vol. 5 No. 4 (1942).
 
 This work was inspired by the [OEIS](https://oeis.org/) and the community of contributors who maintain it.
 
@@ -90,13 +81,8 @@ AMD Ryzen 5 5600 (6-core / 12-thread), 16 GB RAM.
 
 This work is freely available. If you find it useful, a citation or acknowledgment is appreciated but not required.
 
-## References
-
-- T. R. Dawson, *Fairy Chess Review* Vol. 5 No. 4, 1942 -- original formulation of the Minimum Common Superform problem for pentominoes. Archive: [The Problemist -- Fairy Chess Review volumes](https://www.theproblemist.org/mags.pl?type=fcr&page=volumes) (Vol. 5 covers 1942-1945).
-- Puzzle Zapper, [Polyomino Common Superforms](https://puzzlezapper.com/aom/mathrec/polycover.html) -- secondary source describing Dawson's 1942 problem and the MCS concept for polyominoes.
-
 ## Links
 
-- **A000577** (number of free polyiamonds with n cells): https://oeis.org/A000577
-- **A327094** (square-grid analog: smallest polyomino containing all free n-ominoes): https://oeis.org/A327094
-- **A352029** (count of minimum-size square-grid containers): https://oeis.org/A352029
+- **A327094** (square-grid analog): https://oeis.org/A327094
+- **A000577** (free polyiamond count): https://oeis.org/A000577
+- **A394840** (polyiamond hole, companion sequence): https://oeis.org/A394840

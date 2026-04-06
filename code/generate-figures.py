@@ -39,7 +39,7 @@ def main():
     doc = DocumentBuilder(
         title="Smallest Connected Polyiamond Containing All Free n-Iamonds",
         description=("a(n) = minimum triangular cells in a connected polyiamond "
-                     "that contains every free n-iamond as a sub-pattern "
+                     "that contains every free n-iamond as a sub-polyiamond "
                      "(under translation, rotation, reflection)."),
         sequence_line=f"a(1..{len(terms)}) = {seq_str}",
     )
