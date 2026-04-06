@@ -61,7 +61,7 @@ python code/verify_geometric.py 14      # ~28s, geometric containment
 | `code/verify_geometric.py` | Independent verifier #2 (containment + local optimality) |
 | `code/generate-figures.py` | Publication figure generator |
 | `research/solver-results.json` | Machine-readable results with solutions |
-| `submission/hero-a14.pdf` | Hero figure: a(14) = 42 |
+| `submission/polyiamond-container-figures.pdf` | Publication figures (all 14 containers) |
 
 ## Prior Art and Acknowledgments
 
