@@ -1,6 +1,6 @@
-# OEIS (pending) -- Smallest Polyiamond Containing All Free n-Iamonds
+# OEIS A392363 -- Smallest Polyiamond Containing All Free n-Iamonds
 
-Solver code, data, and figures for a new OEIS sequence (A-number pending submission).
+Solver code, data, and figures for [OEIS A392363](https://oeis.org/A392363).
 
 ## The Problem
 
