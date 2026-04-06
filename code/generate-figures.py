@@ -53,7 +53,11 @@ def main():
         det = details.get(n_str, {})
         bbox = det.get("grid_size", [0, 0])
         pieces = det.get("num_free_polyiamonds", "?")
-        elapsed = det.get("elapsed", "?")
+        elapsed_raw = det.get("elapsed", "?")
+        if isinstance(elapsed_raw, (int, float)):
+            elapsed = f"{elapsed_raw:.1f}"
+        else:
+            elapsed = str(elapsed_raw)
         detail_text = (f"{a_n} cells, {pieces} free pieces, "
                        f"bbox {bbox[0]}x{bbox[1]}, solved in {elapsed}s")
 
