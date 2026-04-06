@@ -67,7 +67,7 @@ python code/verify_geometric.py 14      # ~28s, geometric containment
 
 This is a new sequence -- no prior OEIS entry exists for this problem. Prior art search: OEIS (8 queries), arXiv, Google Scholar, GitHub, and general web sources. No match found. Closest known sequence [A033638](https://oeis.org/A033638) (quarter-squares + 1) diverges at a(8).
 
-T. R. Dawson introduced the Minimum Common Superform (MCS) problem for pentominoes in *Fairy Chess Review* Vol. 5 No. 4 (1942).
+The problem generalises T. R. Dawson's 1942 Minimum Common Superform question for pentominoes (*Fairy Chess Review* Vol. 5 No. 4) to the triangular grid.
 
 This work was inspired by the [OEIS](https://oeis.org/) and the community of contributors who maintain it.
 
@@ -86,3 +86,5 @@ This work is freely available. If you find it useful, a citation or acknowledgme
 - **A327094** (square-grid analog): https://oeis.org/A327094
 - **A000577** (free polyiamond count): https://oeis.org/A000577
 - **A394840** (polyiamond hole, companion sequence): https://oeis.org/A394840
+- T. R. Dawson, *Fairy Chess Review* Vol. 5 No. 4, 1942 -- original MCS problem. Archive: [The Problemist](https://www.theproblemist.org/mags.pl?type=fcr&page=volumes) (Vol. 5 covers 1942-1945).
+- Puzzle Zapper, [Polyomino Common Superforms](https://puzzlezapper.com/aom/mathrec/polycover.html) -- secondary source on Dawson's 1942 problem.
