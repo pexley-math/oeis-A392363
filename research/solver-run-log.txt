@@ -1,0 +1,244 @@
+======================================================================
+Smallest polyiamond containing all free n-iamonds
+Triangular grid analog of A327094 (square grid)
+SAT solver (Glucose 4.2) with connectivity cuts
+======================================================================
+  Software: Glucose 4.2 via PySAT 1.9.dev2, Python 3.12.9
+  Hardware: AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD, Windows 11
+  Date: 2026-04-06
+  n values to solve: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+
+  Free polyiamond counts (A000577):
+    n=1: 1 free 1-iamonds  OK
+    n=2: 1 free 2-iamonds  OK
+    n=3: 1 free 3-iamonds  OK
+    n=4: 3 free 4-iamonds  OK
+    n=5: 4 free 5-iamonds  OK
+    n=6: 12 free 6-iamonds  OK
+    n=7: 24 free 7-iamonds  OK
+    n=8: 66 free 8-iamonds  OK
+
+  n = 1
+  ----------------------------------------
+    Trivial: a(1) = 1 (single cell)  [0.000s]
+
+  n = 2
+  ----------------------------------------
+    Trivial: a(2) = 2 (domino)  [0.000s]
+
+  n = 3
+  ----------------------------------------
+    Trivial: a(3) = 3 (1 free triamond)  [0.000s]
+
+  n = 4
+  ----------------------------------------
+    3 free 4-iamonds
+    Grid: 4 X 4
+    Mode: unconstrained + pre-solve
+    Search: k = 5 down to 4 (hint; widens if needed)
+    Phase 2: Linear descent [4..5]
+    k = 5: SAT  [0.0s]
+    k = 4: UNSAT  [0.0s]  <-- optimality proved
+    Result: a(4) = 5  [0.0s]  PROVED
+    Verified: OK -- 5 cells, connected, all 3 free 4-iamonds fit
+    Bounding box: 2 X 4
+     . v . .
+     v ^ v ^
+
+  n = 5
+  ----------------------------------------
+    4 free 5-iamonds
+    Grid: 4 X 5
+    Mode: unconstrained + pre-solve
+    Search: k = 7 down to 5 (hint; widens if needed)
+    Phase 2: Linear descent [5..7]
+    k = 7: SAT  [0.0s]
+    k = 6: UNSAT  [0.0s]  <-- optimality proved
+    Result: a(5) = 7  [0.0s]  PROVED
+    Verified: OK -- 7 cells, connected, all 4 free 5-iamonds fit
+    Bounding box: 2 X 5
+     . . ^ v .
+     v ^ v ^ v
+
+  n = 6
+  ----------------------------------------
+    12 free 6-iamonds
+    Grid: 4 X 6
+    Mode: unconstrained + pre-solve
+    Search: k = 10 down to 8 (hint; widens if needed)
+    Phase 2: Linear descent [8..10]
+    k = 10: SAT  [0.0s]
+    k = 9: UNSAT  [0.0s]  <-- optimality proved
+    Result: a(6) = 10  [0.0s]  PROVED
+    Verified: OK -- 10 cells, connected, all 12 free 6-iamonds fit
+    Bounding box: 2 X 6
+     . . ^ v ^ v
+     v ^ v ^ v ^
+
+  n = 7
+  ----------------------------------------
+    24 free 7-iamonds
+    Grid: 4 X 7
+    Mode: unconstrained + pre-solve
+    Search: k = 13 down to 10 (hint; widens if needed)
+    Phase 2: Linear descent [10..13]
+    k = 13: SAT  [0.0s]
+    k = 12: UNSAT  [0.0s]  <-- optimality proved
+    Result: a(7) = 13  [0.1s]  PROVED
+    Verified: OK -- 13 cells, connected, all 24 free 7-iamonds fit
+    Bounding box: 3 X 7
+     . . . . . . v
+     ^ v ^ v ^ v ^
+     . ^ . ^ v ^ v
+
+  n = 8
+  ----------------------------------------
+    66 free 8-iamonds
+    Grid: 4 X 8
+    Mode: unconstrained + pre-solve
+    Search: k = 16 down to 13 (hint; widens if needed)
+    Phase 2: Linear descent [13..16]
+    k = 16: SAT  [0.0s]
+    k = 15: UNSAT  [0.1s]  <-- optimality proved
+    Result: a(8) = 16  [0.2s]  PROVED
+    Verified: OK -- 16 cells, connected, all 66 free 8-iamonds fit
+    Bounding box: 3 X 8
+     . . . . v . v .
+     ^ v ^ v ^ v ^ v
+     . ^ v ^ v ^ v .
+
+  n = 9
+  ----------------------------------------
+    160 free 9-iamonds
+    Grid: 4 X 9
+    Mode: unconstrained + pre-solve
+    Search: k = 20 down to 17 (hint; widens if needed)
+    Phase 2: Linear descent [17..20]
+    k = 20: SAT  [0.0s]
+    k = 19: SAT  [0.0s]
+    k = 18: UNSAT  [0.1s]  <-- optimality proved
+    Result: a(9) = 19  [0.6s]  PROVED
+    Verified: OK -- 19 cells, connected, all 160 free 9-iamonds fit
+    Bounding box: 3 X 9
+     . . v . . . v ^ v
+     ^ v ^ v ^ v ^ v ^
+     . . . ^ v ^ v ^ v
+
+  n = 10
+  ----------------------------------------
+    448 free 10-iamonds
+    Grid: 4 X 10
+    Mode: unconstrained + pre-solve
+    Search: k = 24 down to 20 (hint; widens if needed)
+    Phase 2: Linear descent [20..24]
+    k = 24: SAT  [0.1s]
+    k = 23: UNSAT  [0.7s]  <-- optimality proved
+    Result: a(10) = 24  [1.9s]  PROVED
+    Verified: OK -- 24 cells, connected, all 448 free 10-iamonds fit
+    Bounding box: 4 X 10
+     . . . . . . . v . .
+     . . . . . ^ v ^ v .
+     . v ^ v ^ v ^ v ^ v
+     v ^ v ^ v ^ v ^ v ^
+
+  n = 11
+  ----------------------------------------
+    1186 free 11-iamonds
+    Grid: 4 X 11
+    Mode: unconstrained + pre-solve
+    Search: k = 29 down to 25 (hint; widens if needed)
+    Phase 2: Linear descent [25..29]
+    k = 29: SAT  [0.3s]
+    k = 28: SAT  [0.3s]
+    k = 27: SAT  [0.4s]
+    k = 26: UNSAT  [2.5s]  <-- optimality proved
+    Result: a(11) = 27  [6.9s]  PROVED
+    Verified: OK -- 27 cells, connected, all 1186 free 11-iamonds fit
+    Bounding box: 4 X 11
+     . . . . . . . v ^ v .
+     v ^ v ^ v ^ v ^ v ^ v
+     ^ v ^ v ^ v ^ v ^ . .
+     . ^ . . . ^ v ^ . . .
+
+  n = 12
+  ----------------------------------------
+    3334 free 12-iamonds
+    Grid: 4 X 12
+    Mode: unconstrained + pre-solve
+    Search: k = 34 down to 29 (hint; widens if needed)
+    Phase 2: Linear descent [29..34]
+    k = 34: SAT  [1.4s]
+    k = 33: SAT  [1.5s]
+    k = 32: SAT  [1.5s]
+    k = 31: UNSAT  [3.6s]  <-- optimality proved
+    Result: a(12) = 32  [20.7s]  PROVED
+    Verified: OK -- 32 cells, connected, all 3334 free 12-iamonds fit
+    Bounding box: 4 X 12
+     . . . . . . ^ v ^ v . .
+     . . . . . . v ^ v ^ v ^
+     ^ v ^ v ^ v ^ v ^ v ^ v
+     . ^ v ^ v ^ v ^ v ^ v .
+
+  n = 13
+  ----------------------------------------
+    9235 free 13-iamonds
+    Grid: 5 X 13
+    Mode: unconstrained + pre-solve
+    Search: k = 39 down to 34 (hint; widens if needed)
+    Phase 2: Linear descent [34..39]
+    k = 39: SAT  [7.3s]
+    k = 38: SAT  [7.7s]
+    k = 37: SAT  [7.2s]
+    k = 36: UNSAT  [893.3s]  <-- optimality proved
+    Result: a(13) = 37  [955.1s]  PROVED
+    Verified: OK -- 37 cells, connected, all 9235 free 13-iamonds fit
+    Bounding box: 5 X 13
+     . . . . . . . . . v . . .
+     . . . . . . . . v ^ v . .
+     . . . v ^ v ^ v ^ v ^ v .
+     v ^ v ^ v ^ v ^ v ^ v ^ v
+     . v ^ v ^ v ^ v ^ v ^ . ^
+
+  n = 14
+  ----------------------------------------
+    26166 free 14-iamonds
+    Grid: 5 X 14
+    Mode: unconstrained + pre-solve
+    Search: k = 45 down to 40 (hint; widens if needed)
+    Phase 2: Linear descent [40..45]
+    k = 45: SAT  [14.6s]
+    k = 44: SAT  [14.4s]
+    k = 43: SAT  [14.7s]
+    k = 42: SAT  [1051.6s]
+    k = 41: UNSAT  [1508.7s]  <-- optimality proved
+    Result: a(14) = 42  [2699.2s]  PROVED
+    Verified: OK -- 42 cells, connected, all 26166 free 14-iamonds fit
+    Bounding box: 5 X 14
+     . . . . . . . . . v ^ v ^ .
+     . . . . v ^ v ^ v ^ v ^ v ^
+     . . . v ^ v ^ v ^ v ^ v ^ v
+     v ^ v ^ v ^ v ^ v ^ v ^ v ^
+     . . ^ . . . ^ . . . ^ . . .
+
+======================================================================
+RESULTS SUMMARY
+======================================================================
+    n   a(n)        Box   Pieces      Time  Status
+  ---  -----  ---------  -------  --------  ------
+    1      1      1 X 1        1      0.0s  PROVED
+    2      2      1 X 2        1      0.0s  PROVED
+    3      3      1 X 3        1      0.0s  PROVED
+    4      5      2 X 4        3      0.0s  PROVED
+    5      7      2 X 5        4      0.0s  PROVED
+    6     10      2 X 6       12      0.0s  PROVED
+    7     13      3 X 7       24      0.1s  PROVED
+    8     16      3 X 8       66      0.2s  PROVED
+    9     19      3 X 9      160      0.6s  PROVED
+   10     24     4 X 10      448      1.9s  PROVED
+   11     27     4 X 11     1186      6.9s  PROVED
+   12     32     4 X 12     3334     20.7s  PROVED
+   13     37     5 X 13     9235    955.1s  PROVED
+   14     42     5 X 14    26166   2699.2s  PROVED
+
+  Total time: 3684.9s
+
