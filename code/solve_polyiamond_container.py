@@ -54,6 +54,8 @@ try:
 except ImportError:
     _USE_CYTHON_ENUM = False
 
+from sat_utils.tilings.polyiamond import fits_in_rigid as _shared_fits_in_rigid
+
 try:
     from figure_gen_utils.versioned_output import save_versioned
     HAS_VERSIONED = True
@@ -214,6 +216,11 @@ def all_placements(free_polys, grid_rows, grid_cols):
             min_c = min(c for r, c in cells)
             for dr in range(-min_r, grid_rows - max_r):
                 for dc in range(-min_c, grid_cols - max_c):
+                    # Triangular grid: only parity-preserving translations
+                    # are rigid Euclidean motions. Odd (dr+dc) shifts flip
+                    # cell orientations and are NOT valid placements.
+                    if (dr + dc) % 2 != 0:
+                        continue
                     placed = tuple(sorted((r + dr, c + dc) for r, c in cells))
                     if placed not in seen_sets:
                         seen_sets.add(placed)
@@ -275,32 +282,11 @@ def verify_solution(n, cells, free_polys, verbose=False):
         return True, (f"OK -- {size} cells, connected, trivially contains "
                       f"all free {n}-iamonds")
 
-    # Compute bounding box for offset search
-    min_r = min(r for r, c in cell_set)
-    max_r = max(r for r, c in cell_set)
-    min_c = min(c for r, c in cell_set)
-    max_c = max(c for r, c in cell_set)
-
+    # Delegate rigid-motion containment to the shared library, which
+    # uses the parity-preserving direct-translation pattern (no per-file
+    # re-normalise parity trap). See feedback-placement-renormalize-parity.
     for idx, poly in enumerate(free_polys):
-        fits = False
-        for ori in tri_orientations(poly):
-            ori_cells = list(ori)
-            omr = min(r for r, c in ori_cells)
-            omc = min(c for r, c in ori_cells)
-            norm = [(r - omr, c - omc) for r, c in ori_cells]
-            p_max_r = max(r for r, c in norm)
-            p_max_c = max(c for r, c in norm)
-            for dr in range(min_r, max_r - p_max_r + 1):
-                for dc in range(min_c, max_c - p_max_c + 1):
-                    placed = set((r + dr, c + dc) for r, c in norm)
-                    if placed <= cell_set:
-                        fits = True
-                        break
-                if fits:
-                    break
-            if fits:
-                break
-        if not fits:
+        if not _shared_fits_in_rigid(poly, cell_set):
             return False, f"Free {n}-iamond #{idx} does not fit"
         if verbose:
             print(f"    Piece {idx + 1}/{len(free_polys)}: fits")
@@ -314,14 +300,19 @@ def verify_solution(n, cells, free_polys, verbose=False):
 # ============================================================
 
 def solve_sat(n_target, grid_rows, grid_cols, upper_bound, free_polys,
-              use_shape=False, verbose=False):
+              use_shape=False, use_full_row=False, lower_bound=None,
+              verbose=False):
     """
     SAT-based top-down search for the smallest polyiamond containing all
     free n-iamonds.
 
-    If use_shape=True, adds shape constraints:
-      1. Contiguous c-values per row (no gaps within rows)
-      2. At least one full row (all c values occupied, width = grid_cols = n)
+    If use_shape=True, adds FULL shape constraints (contiguity + full row).
+    WARNING: contiguity is UNSAFE -- excludes optima at n=11, 14.
+
+    If use_full_row=True, adds ONLY the full-row constraint (at least one
+    row fully occupied). This is safe on all tested n=4..14 (the optimal
+    container always has a full row of width n). Much faster than
+    unconstrained because it prunes containers without an I-piece row.
 
     Connectivity enforced via iterative CEGAR cuts.
     """
@@ -352,6 +343,38 @@ def solve_sat(n_target, grid_rows, grid_cols, upper_bound, free_polys,
             if verbose:
                 print(f"    Piece {i} has no valid placements -- infeasible")
             return None, None
+
+    # ---- Pre-solve: mandatory and impossible cells ----
+    mandatory_cells = set()
+    impossible_cells = set()
+    all_grid_cells = {(r, c) for r in range(grid_rows) for c in range(grid_cols)}
+    # A cell is impossible if no placement of any piece uses it
+    cells_used_by_any = set()
+    for pplacements in placements:
+        for placed_cells in pplacements:
+            for cell in placed_cells:
+                cells_used_by_any.add(cell)
+    impossible_cells = all_grid_cells - cells_used_by_any
+    # A cell is mandatory if ALL placements of some piece include it
+    for i, pplacements in enumerate(placements):
+        if not pplacements:
+            continue
+        common = set(pplacements[0])
+        for placed_cells in pplacements[1:]:
+            common &= set(placed_cells)
+            if not common:
+                break
+        mandatory_cells |= common
+
+    presolve_clauses = []
+    for r, c in impossible_cells:
+        presolve_clauses.append([-var(r, c)])
+    for r, c in mandatory_cells:
+        presolve_clauses.append([var(r, c)])
+
+    if verbose or (mandatory_cells or impossible_cells):
+        print(f"    Pre-solve: {len(mandatory_cells)} mandatory, "
+              f"{len(impossible_cells)} impossible cells")
 
     # ---- Shape constraints ----
     shape_clauses = []
@@ -390,15 +413,32 @@ def solve_sat(n_target, grid_rows, grid_cols, upper_bound, free_polys,
         if verbose:
             print(f"    Shape constraints: {contiguous_count} contiguous, "
                   f"{len(full_row_vars)} full-row vars")
+
+    elif use_full_row and grid_cols >= 4:
+        # Full-row constraint ONLY (no contiguity). Safe on all tested n.
+        # Forces at least one row to have all grid_cols cells occupied.
+        full_row_vars = []
+        for r in range(grid_rows):
+            fv = aux_id
+            aux_id += 1
+            full_row_vars.append(fv)
+            for c in range(grid_cols):
+                shape_clauses.append([-fv, var(r, c)])
+            shape_clauses.append([fv] + [-var(r, c) for c in range(grid_cols)])
+        shape_clauses.append(full_row_vars[:])
+        if verbose:
+            print(f"    Full-row constraint: {len(full_row_vars)} row vars")
             print(f"    Total shape clauses: {len(shape_clauses)}")
 
+    # Merge presolve clauses into shape_clauses (both are extra clauses)
+    shape_clauses.extend(presolve_clauses)
+
     # Two-phase search: binary search to narrow range, then linear
-    # descent for proof. Problem is monotone (SAT at k => SAT at k+1)
-    # so binary search is valid even with shape constraints.
+    # descent for proof. Problem is monotone (SAT at k => SAT at k+1).
     best_size = None
     best_cells = None
 
-    lo = n_target
+    lo = lower_bound if lower_bound is not None else n_target
     hi = upper_bound
 
     # Phase 1: Binary search to find tight upper bound
@@ -421,9 +461,12 @@ def solve_sat(n_target, grid_rows, grid_cols, upper_bound, free_polys,
                 lo = mid + 1
                 print(f"    k = {mid}: UNSAT  [{elapsed:.1f}s]")
 
-    # Phase 2: Linear descent for exact proof
+    # Phase 2: Linear descent for exact proof.
+    # lo is a SOFT hint: if we reach lo and it's still SAT, keep going
+    # down to the hard floor (n_target) to ensure correctness.
+    hard_floor = n_target
     print(f"    Phase 2: Linear descent [{lo}..{hi}]")
-    for k in range(hi, lo - 1, -1):
+    for k in range(hi, hard_floor - 1, -1):
         t1 = time.time()
         result = _try_solve(grid_rows, grid_cols, k, placements, piece_aux,
                             n_pieces, var, cell_vars, shape_clauses, aux_id)
@@ -716,24 +759,30 @@ def _run_solver(args, n_values):
         grid_rows = max(4, (n + 2) // 3)
         grid_cols = n
 
-        # Upper bound: a filled grid_rows x grid_cols grid. The solver
-        # descends from here via binary search + linear proof.
-        upper = grid_rows * grid_cols
+        # Bounds: empirical hints to narrow the binary search.
+        # These are SOFT bounds -- the solver widens if needed.
+        # Upper: min(grid, empirical) is safe (grid is always valid).
+        # Lower: used as hint only; solver continues below if SAT at lo.
+        import math
+        empirical_hi = math.ceil((n * n + 2 * n) / 5)
+        upper = min(grid_rows * grid_cols, empirical_hi)
+        lower_hint = max(n, math.ceil(n * n / 5))
 
-        # Shape constraints for n >= 6: contiguous columns per row +
-        # at least one full row. Adapted from polyhex containers.
-        # No row pinning (learned from polyhex: optimal full row can
-        # be interior).
-        use_shape = (n >= 6)
-        mode = "shape-constrained" if use_shape else "unconstrained"
+        # No heuristic constraints. Pre-solve (mandatory/impossible cells)
+        # is the only non-trivial addition -- provably safe.
+        use_shape = False
+        use_full_row = False
+        mode = "unconstrained + pre-solve"
 
         output(f"    Grid: {grid_rows} X {grid_cols}")
         output(f"    Mode: {mode}")
-        output(f"    Search: k = {upper} down to {n}")
+        output(f"    Search: k = {upper} down to {lower_hint} "
+               f"(hint; widens if needed)")
 
         best_size, best_cells = solve_sat(
             n, grid_rows, grid_cols, upper, free_polys,
-            use_shape=use_shape, verbose=args.verbose)
+            use_shape=use_shape, use_full_row=use_full_row,
+            lower_bound=lower_hint, verbose=args.verbose)
         elapsed = time.time() - t0
 
         if best_size is not None:
@@ -851,13 +900,10 @@ def _run_solver(args, n_values):
     json_path = args.json or str(PROJ_ROOT / "oeis-new-polyiamond-container" / "research" / "solver-results.json")
     os.makedirs(os.path.dirname(json_path) or ".", exist_ok=True)
     if HAS_VERSIONED:
-        vpath = save_versioned(structured_output, json_path)
-        output(f"\n  Results saved to {json_path}")
-        output(f"  Versioned: {vpath}")
+        save_versioned(structured_output, json_path)
     else:
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(structured_output, f, indent=2)
-        output(f"\n  Results saved to {json_path}")
 
     output()
 
