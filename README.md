@@ -4,7 +4,7 @@ Solver code, data, and figures for [OEIS A392363](https://oeis.org/A392363).
 
 ## The Problem
 
-a(n) = the minimum number of triangular cells in a connected polyiamond such that every free n-iamond can be placed entirely within it under a rigid motion of the triangular lattice (a D_6 orientation plus a parity-preserving lattice translation). This is the triangular-grid analog of [A327094](https://oeis.org/A327094) (square grid, Dawson's Minimum Common Superform problem, 1942). The input to the problem -- the number of free n-iamonds -- is [A000577](https://oeis.org/A000577).
+a(n) = the minimum number of triangular cells in a connected polyiamond such that every free n-iamond can be placed entirely within it under a rigid motion of the triangular lattice (a D_6 orientation plus a parity-preserving lattice translation). This is the triangular-grid analog of [A327094](https://oeis.org/A327094) (square grid, submitted to OEIS by Peter Kagey in 2019; the underlying Minimum Common Superform question for pentominoes was posed by T. R. Dawson in 1942). The input to the problem -- the number of free n-iamonds -- is [A000577](https://oeis.org/A000577).
 
 ## Results
 
@@ -61,8 +61,7 @@ python code/verify_geometric.py 14      # ~28s, geometric containment
 | `code/verify_geometric.py` | Independent verifier #2 (containment + local optimality) |
 | `code/generate-figures.py` | Publication figure generator |
 | `research/solver-results.json` | Machine-readable results with solutions |
-| `research/solver-run-log.txt` | Reviewer-grade proof of solver run |
-| `submission/polyiamond-container-figures.pdf` | Publication figures (all 14 containers) |
+| `submission/hero-a14.pdf` | Hero figure: a(14) = 42 |
 
 ## Prior Art and Acknowledgments
 
