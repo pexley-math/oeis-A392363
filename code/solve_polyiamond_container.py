@@ -625,7 +625,7 @@ def main():
 
     # Default log path to research/solver-run-log.txt if not specified
     if args.log is None:
-        args.log = str(PROJ_ROOT / "oeis-polyiamond-container" / "research" / "solver-run-log.txt")
+        args.log = str(PROJ_ROOT / "oeis-A392363" / "research" / "solver-run-log.txt")
     os.makedirs(os.path.dirname(args.log) or ".", exist_ok=True)
 
     # Set up logging to file (tee stdout)
@@ -897,7 +897,7 @@ def _run_solver(args, n_values):
         "solutions": solutions_dict,
     }
 
-    json_path = args.json or str(PROJ_ROOT / "oeis-polyiamond-container" / "research" / "solver-results.json")
+    json_path = args.json or str(PROJ_ROOT / "oeis-A392363" / "research" / "solver-results.json")
     os.makedirs(os.path.dirname(json_path) or ".", exist_ok=True)
     if HAS_VERSIONED:
         save_versioned(structured_output, json_path)
